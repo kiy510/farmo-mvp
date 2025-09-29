@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>農業データ可視化</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>農業データ可視化（EC & pH）</h1>
+  <canvas id="myChart" width="400" height="200"></canvas>
+
+  <script>
+    async function loadData() {
+      const res = await fetch('/api/readings');
+      const data = await res.json();
+
+      const ctx = document.getElementById('myChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [data.timestamp],   // x軸（時間）
+          datasets: [
+            {
+              label: 'EC (mS/cm)',
+              data: [data.ec],
+              borderColor: 'blue',
+              fill: false
+            },
+            {
+              label: 'pH',
+              data: [data.ph],
+              borderColor: 'green',
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { title: { display: true, text: '時刻' } },
+            y: { title: { display: true, text: '値' } }
+          }
+        }
+      });
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
